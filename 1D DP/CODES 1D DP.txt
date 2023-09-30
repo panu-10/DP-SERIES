@@ -1,0 +1,83 @@
+#climbing stairs dp
+#include <bits/stdc++.h>
+int mod=1e9+7;
+int help(int n) {
+  if(n<=1) return 1;
+  int prev2=1;
+  int prev=1;
+  for(int i=2;i<=n;i++){
+     int cur=(prev+prev2)%mod;
+     prev2=prev;
+     prev=cur;
+  }
+  return prev;
+}
+int countDistinctWays(int nStairs) { 
+  return help(nStairs); }
+
+#frog jump tab
+#include <bits/stdc++.h>
+int help(int ind,vector<int>arr,vector<int>&dp){
+  dp[0]=0;
+  int two=INT_MAX;
+  for(int i=1;i<=ind;i++){
+    int one=dp[i-1]+abs(arr[i]-arr[i-1]);
+    if(i>1) two=dp[i-2]+abs(arr[i]-arr[i-2]);
+    dp[i]=min(one,two);
+  }
+  return dp[ind];
+}
+int frogJump(int n, vector<int> &heights) {
+  vector<int>dp(n+1,-1);
+  return help(n - 1, heights,dp); }
+
+
+
+#maximum sum tab
+#include <bits/stdc++.h>
+int help(int ind,vector<int>arr,vector<int>&dp){
+  dp[0]=arr[0];
+  for (int i = 1; i <=ind; i++) {
+    int pick = arr[i] + dp[i - 2];
+    int notpick = 0 + dp[i - 1];
+    dp[i] = max(pick, notpick);
+  }
+  return dp[ind];
+}
+int maximumNonAdjacentSum(vector<int> &nums) {
+  int n = nums.size();
+  vector<int>dp(n,-1);
+  return help(n-1,nums,dp);
+}
+
+
+#house robber 2 space
+#include <bits/stdc++.h> 
+long long int help(vector<int>&arr){
+ long long int prev2=0;
+ long long int prev=arr[0];
+ for(int i=1;i<arr.size();i++){
+   long long int pick=arr[i];
+   if(i>1) pick=pick+prev2;
+   long long int notpick=0+prev;
+   long long int cur=max(pick,notpick);
+   prev2=prev;
+   prev=cur;
+ }
+ return prev;
+}
+long long int houseRobber(vector<int>& valueInHouse)
+{
+    int n=valueInHouse.size();
+     if(n==1) return valueInHouse[0];
+    vector<int>temp,temp2;
+    for (int i = 0; i <n; i++) {
+    if (i != 0)
+      temp.push_back(valueInHouse[i]);
+    if (i != n - 1)
+      temp2.push_back(valueInHouse[i]);
+    }
+    long long int max1 = help(temp);
+    long long int max2 = help(temp2);
+    return max(max1, max2);
+}

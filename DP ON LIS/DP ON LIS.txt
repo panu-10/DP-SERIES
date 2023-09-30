@@ -1,0 +1,189 @@
+#lis binary search
+#include<bits/stdc++.h>
+int longestIncreasingSubsequence(int arr[], int n)
+{
+   vector<int>temp;
+   temp.push_back(arr[0]);
+   for(int i=1;i<n;i++){
+       if(arr[i]>temp.back()){
+           temp.push_back(arr[i]);
+       }
+       else{
+           int index=lower_bound(temp.begin(),temp.end(),arr[i])-temp.begin();
+           temp[index]=arr[i];
+       }
+   }
+   return temp.size();
+}
+
+#print lis ******
+###creating a hash array for storing prev index
+vector<int> printingLongestIncreasingSubsequence(vector<int> arr, int n) {
+	int lastindex=0;
+	vector<int>dp(n,1),hash(n);
+	int maxi=1;
+	for(int i=0;i<n;i++){
+		hash[i]=i;
+		for(int prev=0;prev<=i-1;prev++){
+            if(arr[prev]<arr[i] && 1+dp[prev]>dp[i]){
+				dp[i]=1+dp[prev];
+				hash[i]=prev;
+			}
+		}
+		if(dp[i]>maxi){
+			maxi=dp[i];
+			lastindex=i;
+		}
+	}
+	vector<int>temp;
+	temp.push_back(arr[lastindex]);
+        while (hash[lastindex] != lastindex) {
+                lastindex = hash[lastindex];
+                temp.push_back(arr[lastindex]);
+        }
+        reverse(temp.begin(), temp.end());
+        return temp;
+}
+
+
+#largest divisible set   ***********
+vector<int> divisibleSet(vector<int> &arr)
+{
+    int n=arr.size();
+    int maxi=1;
+    int lastindex=0;
+    sort(arr.begin(),arr.end());
+    vector<int>dp(n,1),hash(n);
+    for(int i=0;i<n;i++){
+        hash[i]=i;
+        for(int prev=0;prev<i;prev++){
+            if(arr[i]%arr[prev]==0 && 1+dp[prev]>dp[i]){
+                   dp[i]=1+dp[prev];
+                   hash[i]=prev;
+            }
+        }
+        if(dp[i]>maxi){
+            maxi=dp[i];
+            lastindex=i;
+        }
+    }
+    vector<int>temp;
+    temp.push_back(arr[lastindex]);
+    while(hash[lastindex]!=lastindex){
+        lastindex=hash[lastindex];
+        temp.push_back(arr[lastindex]);
+    }
+    reverse(temp.begin(),temp.end());
+    return temp;
+}
+
+
+
+
+
+
+
+
+#longest string subset  *******
+#include<bits/stdc++.h>
+bool f(string s1,string s2){
+    if(s1.size()!=s2.size()+1) return false;
+    int first=0;
+    int second=0;
+    while(first<s1.size()){
+       if(s1[first]==s2[second]){
+           first++;
+           second++;
+       }
+       else{
+           first++;
+       }   
+    }
+    if(first==s1.size() && second==s2.size()) return true;
+    return false;
+}
+bool comp(string &s1,string &s2){
+    return s1.size()<s2.size();
+}
+int longestStrChain(vector<string> &arr){
+   int n=arr.size();
+    int maxi=1;
+    sort(arr.begin(),arr.end(),comp);
+    vector<int>dp(n,1);
+    for(int i=0;i<n;i++){
+        for(int prev=0;prev<i;prev++){
+            if( f(arr[i],arr[prev])&& 1+dp[prev]>dp[i]){
+                   dp[i]=1+dp[prev];
+            }
+        }
+        if(dp[i]>maxi){
+            maxi=dp[i];
+        }
+    }
+    return maxi;
+}
+
+
+
+
+#longest biotonic subsequence ********
+int longestBitonicSubsequence(vector<int>& arr, int n)
+{
+	
+
+    vector<int>dp1(n,1);
+    for(int i=0;i<n;i++){
+        for(int prev=0;prev<i;prev++){
+            if(arr[i]>arr[prev] && 1+dp1[prev]>dp1[i]){
+                   dp1[i]=1+dp1[prev];
+            }
+        }
+    }
+    
+	vector<int>dp2(n,1);
+    for(int i=n-1;i>=0;i--){
+        for(int prev=n-1;prev>i;prev--){
+            if(arr[i]>arr[prev]&& 1+dp2[prev]>dp2[i]){
+                   dp2[i]=1+dp2[prev];
+            }
+        }
+    }
+	int maxi=0;
+	for(int i=0;i<n;i++){
+		maxi=max(maxi,dp1[i]+dp2[i]);
+	}
+	return maxi-1;
+}
+
+
+
+
+
+
+#number of lis  ***********
+int findNumberOfLIS(vector<int> &arr)
+{
+  
+  int n=arr.size();	
+   int maxi=0;
+    vector<int>dp1(n,1),cnt(n,1);
+    for(int i=0;i<n;i++){
+        for(int prev=0;prev<i;prev++){
+            if(arr[i]>arr[prev] && 1+dp1[prev]>dp1[i]){
+                   dp1[i]=1+dp1[prev];
+                  cnt[i]=cnt[prev];
+            }
+            else if(arr[i]>arr[prev] && 1+dp1[prev]==dp1[i]){
+                cnt[i]+=cnt[prev];
+            }
+        }
+        maxi=max(maxi,dp1[i]);
+    }
+    int nos=0;
+    for(int i=0;i<n;i++){
+        if(dp1[i]==maxi) nos+=cnt[i];
+    }
+    return nos;
+}
+
+

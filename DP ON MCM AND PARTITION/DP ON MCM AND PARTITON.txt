@@ -1,0 +1,188 @@
+
+
+
+
+#mcm mem partition dp   *********
+#include <bits/stdc++.h> 
+
+int f(int i,int j,vector<int> &arr,int n,vector<vector<int>>&dp){
+   if(i==j) return 0;
+   int mini=1e9;
+   int steps;
+   if(dp[i][j]!=-1) return dp[i][j];
+   for(int k=i;k<=j-1;k++){
+       steps=arr[i-1]*arr[k]*arr[j]+f(i,k,arr,n,dp)+f(k+1,j,arr,n,dp);
+       mini=min(mini,steps);
+   }
+   return dp[i][j]=mini;
+}
+int matrixMultiplication(vector<int> &arr, int N)
+{
+    vector<vector<int>>dp(N+1,vector<int>(N+1,-1));
+    return f(1,N-1,arr,N,dp);
+}
+
+
+
+
+
+#minimum cost to stick mem partition dp  ***********
+#include <bits/stdc++.h> 
+
+int f(int i,int j,int c,vector<int> &cuts,vector<vector<int>>&dp){
+    if(i>j) return 0;
+    if(dp[i][j]!=-1) return dp[i][j];
+    int mini=1e9;
+    int cost=0;
+    for(int index=i;index<=j;index++){
+        cost=cuts[j+1]-cuts[i-1]+f(i,index-1,c,cuts,dp)+f(index+1,j,c,cuts,dp);
+        mini=min(mini,cost);
+    }
+    return dp[i][j]=mini;
+}
+int cost(int n, int c, vector<int> &cuts){
+    cuts.push_back(n);
+    cuts.insert(cuts.begin(),0);
+    sort(cuts.begin(),cuts.end());
+    vector<vector<int>>dp(n+1,vector<int>(n+1,-1));
+    return f(1,c,c,cuts,dp);
+}
+
+
+
+
+#burst ballons mem partition dp down to up approach *******
+#include <bits/stdc++.h> 
+
+int f(int i,int j,vector<int> &cuts,vector<vector<int>>&dp){
+    if(i>j) return 0;
+    if(dp[i][j]!=-1) return dp[i][j];
+    int maxi=-1e9;
+    int cost=0;
+    for(int index=i;index<=j;index++){
+        cost=cuts[i-1]*cuts[index]*cuts[j+1]+f(i,index-1,cuts,dp)+f(index+1,j,cuts,dp);
+        maxi=max(maxi,cost);
+    }
+    return dp[i][j]=maxi;
+}
+int maxCoins(vector<int>& a){
+    int n=a.size();
+    a.push_back(1);
+    a.insert(a.begin(),1);
+    vector<vector<int>>dp(n+1,vector<int>(n+1,-1));
+    return f(1,n,a,dp);
+}
+
+
+
+
+#evaluate boolean expression partition dp tb **********************
+#include<bits/stdc++.h>
+#define ll long long 
+int mod = 1000000007;
+
+int evaluateExp(string & exp) {
+    int n= exp.size();
+    vector<vector<vector<ll>>> dp(n, vector<vector<ll>> (n, vector<ll> (2, 0)));
+    
+    for(int i=0; i<n; i++){
+        dp[i][i][1] = exp[i] == 'T';
+        dp[i][i][0] = exp[i] == 'F';
+    }
+    
+    for(int i=n-1; i>=0; i--){
+        for(int j=i+1; j<n; j++){
+            for(int isTrue=0; isTrue <=1; isTrue++){
+                ll ways=0;
+                for(int ind =i+1; ind <= j-1; ind=ind+2){
+                    ll lT = dp[i][ind-1][1];
+                    ll lF = dp[i][ind-1][0];
+                    ll rT = dp[ind+1][j][1];
+                    ll rF = dp[ind+1][j][0];
+                    if(exp[ind] == '&'){
+                        if(isTrue) ways = (ways + (lT * rT)%mod)%mod;
+                        else ways = (ways + (lT*rF)%mod + (lF*rF)%mod + (lF*rT)%mod)%mod;
+                    }
+                    else if(exp[ind] == '|'){
+                        if(isTrue) ways = (ways + (lT*rT)%mod + (lT*rF)%mod + (lF*rT)%mod)%mod;
+                        else ways = (ways + (lF*rF)%mod)%mod;
+                    }
+                    else{
+                        if(isTrue) ways = (ways + (lT*rF)%mod + (lF*rT)%mod)%mod;
+                        else ways = (ways + (lT*rT)%mod + (lF*rF)%mod)%mod;
+                    }
+                }
+                dp[i][j][isTrue] = ways;
+            }
+        }
+    }
+    
+    return dp[0][n-1][1];
+}
+
+
+
+
+
+
+#palindrome partition 2 mem dp
+bool isp(int i,int j,string p){
+    while(i<j){
+        if(p[i]!=p[j]){
+            return false;
+        }
+        i++;
+        j--;
+    }
+    return true;
+}
+
+int f(int ind,int n,string str,vector<int>&dp){
+    if(ind==n) return 0;
+    string temp="";
+    int mini=1e9;
+    int cost=0;
+    if(dp[ind]!=-1) return dp[ind];
+    for(int j=ind;j<=n-1;j++){
+      if(isp(ind,j,str)){ 
+          cost=1+f(j+1,n,str,dp);
+      mini=min(mini,cost);
+      }
+    }
+    return dp[ind]=mini;
+}
+int palindromePartitioning(string str)
+{
+    int n=str.size();
+    vector<int>dp(n+1,-1);
+    return f(0,n,str,dp)-1;
+}
+
+
+
+
+#count square submatrix with all ones tab dp
+#include<bits/stdc++.h>
+int countSquares(int n, int m, vector<vector<int>> &arr) {
+    vector<vector<int>>dp(n,vector<int>(m,0));
+    for(int i=0;i<n;i++) dp[i][0]=arr[i][0];
+    for(int j=0;j<m;j++) dp[0][j]=arr[0][j];
+
+    for(int i=1;i<n;i++){
+        for(int j=1;j<m;j++){
+            if(arr[i][j]==0){ 
+                dp[i][j]=0;
+            }
+            else{
+            dp[i][j]=1+min(dp[i-1][j],min(dp[i-1][j-1],dp[i][j-1]));
+            }
+        }
+    }
+    int max1=0;
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++){
+            max1+=dp[i][j];
+        }
+    }
+    return max1;
+}

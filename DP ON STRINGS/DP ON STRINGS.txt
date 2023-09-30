@@ -1,0 +1,267 @@
+#lcs mem
+#include<bits/stdc++.h>
+int f(int ind1,int ind2,string s,string t,vector<vector<int>>&dp){
+	if(ind1<0||ind2<0) return 0;
+	if(dp[ind1][ind2]!=-1) return dp[ind1][ind2];
+	if(s[ind1]==t[ind2]){
+		return dp[ind1][ind2]=1+f(ind1-1,ind2-1,s,t,dp);
+	}
+	return dp[ind1][ind2]=0+max(f(ind1-1,ind2,s,t,dp),f(ind1,ind2-1,s,t,dp));
+}
+int lcs(string s, string t)
+{
+	int m=s.size();
+	int n=t.size();
+	vector<vector<int>>dp(m,vector<int>(n,-1));
+	return f(m-1,n-1,s,t,dp);
+}
+
+###print lcs
+string findLCS(int n, int m,string &s1, string &s2){
+   	vector<vector<int>>dp(n+1,vector<int>(m+1,0));
+       for(int i=0;i<=n;i++) dp[i][0]=0;
+       for(int j=0;j<=m;j++) dp[0][j]=0;
+       for(int i=1;i<=n;i++){
+           for(int j=1;j<=m;j++){
+               if(s1[i-1]==s2[j-1]){
+                   dp[i][j]=1+dp[i-1][j-1];
+               }
+               else{
+                   dp[i][j]=max(dp[i-1][j],dp[i][j-1]);
+               }
+           }
+       }
+       int len=dp[n][m];
+	   string p="";
+	   for(int i=0;i<len;i++) p+='$';
+	   int index=len-1;
+	   int i=n,j=m;
+	   while(i>0 && j>0){
+            if(s1[i-1]==s2[j-1]){
+				p[index]=s1[i-1];
+				index--;
+				i--;
+				j--;
+			}
+			else if(dp[i-1][j]>dp[i][j-1]){
+				i--;
+			}
+			else {
+				j--;
+			}
+	   }
+	   return p;
+}
+
+###subsequence=means maintaing the order of the string 
+###substring=means maintaing order and should be continous
+###supersubsequence=means both string merge and form a string with no repetions
+
+
+
+
+
+
+
+#lcs of substring tab
+#include<bits/stdc++.h>
+int lcs(string &str1, string &str2)
+{
+	int m=str1.size();
+	int n=str2.size();
+	vector<vector<int>>dp(m+1,vector<int>(n+1,0));
+	for(int i=0;i<=m;i++) dp[i][0]=0;
+    for(int j=0;j<=n;j++) dp[0][j]=0;
+    int ans=0;
+    for(int i=1;i<=m;i++){
+        for(int j=1;j<=n;j++){
+            if(str1[i-1]==str2[j-1]){
+                dp[i][j]=1+dp[i-1][j-1];
+                ans=max(ans,dp[i][j]);
+            }
+            else{
+                dp[i][j]=0;
+            }
+        }
+    }
+    return ans;
+}
+#longest palindromic subsequence mem
+#include <bits/stdc++.h> 
+int f(int ind1,int ind2,string s,string t,vector<vector<int>>&dp){
+	if(ind1<0||ind2<0) return 0;
+	if(dp[ind1][ind2]!=-1) return dp[ind1][ind2];
+	if(s[ind1]==t[ind2]){
+		return dp[ind1][ind2]=1+f(ind1-1,ind2-1,s,t,dp);
+	}
+	return dp[ind1][ind2]=0+max(f(ind1-1,ind2,s,t,dp),f(ind1,ind2-1,s,t,dp));
+}
+string reverse1(string t){
+    string p="";
+    for(int i=t.size()-1;i>=0;i--){
+        p=p+t[i];
+    }
+    return p;
+}
+int longestPalindromeSubsequence(string s)
+{
+    string t=reverse1(s);
+    int m=s.size();
+	int n=t.size();
+	vector<vector<int>>dp(m,vector<int>(n,-1));
+    return f(m-1,n-1,s,t,dp);
+}
+
+
+
+
+#minimum insertions/deletions to make str1 to str2 mem
+#include<bits/stdc++.h>
+int f(int ind1,int ind2,string s,string t,vector<vector<int>>&dp){
+	if(ind1<0||ind2<0) return 0;
+	if(dp[ind1][ind2]!=-1) return dp[ind1][ind2];
+	if(s[ind1]==t[ind2]){
+		return dp[ind1][ind2]=1+f(ind1-1,ind2-1,s,t,dp);
+	}
+	return dp[ind1][ind2]=0+max(f(ind1-1,ind2,s,t,dp),f(ind1,ind2-1,s,t,dp));
+}
+int canYouMake(string &s1, string &s2){
+    int m=s1.size();
+	int n=s2.size();
+	vector<vector<int>>dp(m,vector<int>(n,-1));
+	int p= f(m-1,n-1,s1,s2,dp);
+    int q=m-p;
+    int r=n-p;
+	return q+r;
+}
+
+
+
+
+#shortest common supersubsequence tab
+#include <bits/stdc++.h> 
+string shortestSupersequence(string a, string b)
+{
+	int m=a.size();
+	int n=b.size();
+	vector<vector<int>>dp(m+1,vector<int>(n+1,0));
+	for(int i=0;i<=m;i++) dp[i][0]=0;
+    for(int j=0;j<=n;j++) dp[0][j]=0;
+    for(int i=1;i<=m;i++){
+        for(int j=1;j<=n;j++){
+            if(a[i-1]==b[j-1]){
+                dp[i][j]=1+dp[i-1][j-1];
+            }
+            else{
+                dp[i][j]=max(dp[i-1][j],dp[i][j-1]);
+            }
+        }
+    }
+    int i=m,j=n;
+	string ans="";
+	while(i>0 && j>0){
+         if(a[i-1]==b[j-1]){
+			 ans=ans+a[i-1];
+			 i--;
+			 j--;
+		 }
+		 else if(dp[i-1][j]>dp[i][j-1]){
+			 ans=ans+a[i-1];
+			 i--;
+		 }
+		 else{
+			 ans=ans+b[j-1];
+			 j--;
+		 }
+	}
+	while(i>0){
+ ans=ans+a[i-1]; 
+ i--;
+	}
+	while(j>0){
+ ans=ans+b[j-1];
+  j--;
+	}
+
+	reverse(ans.begin(),ans.end());
+	 return ans;
+}
+
+
+
+
+
+
+
+#distinct subsequences tab
+int distinctSubsequences(string &str, string &sub)
+{
+     int m=str.size();
+	 int n=sub.size();
+	 vector<vector<double>>dp(m+1,vector<double>(n+1,0));
+	 for(int i=0;i<=m;i++) dp[i][0]=1;
+	 for(int i=1;i<=m;i++){
+		 for(int j=1;j<=n;j++){
+				if(str[i-1]==sub[j-1]){
+		 dp[i][j]=dp[i-1][j-1]+dp[i-1][j];
+	}
+	else{
+		 dp[i][j]=dp[i-1][j];
+	} 
+		 }
+	 }
+	 return (int) dp[m][n];
+}
+
+
+
+
+#edit distance mem
+int f(int i,int j,string &str1,string &str2,vector<vector<int>>&dp){
+    if(i<0) return j+1;
+    if(j<0) return i+1;
+    if(dp[i][j]!=-1) return dp[i][j];
+    if(str1[i]==str2[j]){
+        return f(i-1,j-1,str1,str2,dp);
+    }
+    int p=1+f(i,j-1,str1,str2,dp);
+    int q=1+f(i-1,j,str1,str2,dp);
+    int r=1+f(i-1,j-1,str1,str2,dp);
+    return dp[i][j]=min(p,min(q,r));
+}
+int editDistance(string str1, string str2)
+{
+    int m=str1.size();
+    int n=str2.size();
+    vector<vector<int>>dp(m+1,vector<int>(n+1,-1));
+    return f(m-1,n-1,str1,str2,dp);
+}
+
+
+
+
+#wildcard matching mem
+#include<bits/stdc++.h>
+int f(int i,int j,string &str1,string &str2,vector<vector<int>>&dp){
+    if(i<0 && j<0) return true;
+    if(j>=0 && i<0) return false;
+    if(i>=0 && j<0){
+       for(int p=0;p<=i;p++) if(str1[p]!='*') return false;
+       return true;
+    }
+    if(dp[i][j]!=-1) return dp[i][j];
+    if(str1[i]==str2[j]|| str1[i]=='?'){
+        return f(i-1,j-1,str1,str2,dp);
+    }
+    else if(str1[i]=='*')
+    return dp[i][j]=f(i-1,j,str1,str2,dp) || f(i,j-1,str1,str2,dp);
+}
+bool wildcardMatching(string pattern, string text)
+{
+    int m=pattern.size();
+    int n=text.size();
+    vector<vector<int>>dp(m+1,vector<int>(n+1,-1));
+    return f(m-1,n-1,pattern,text,dp);
+}
+
+

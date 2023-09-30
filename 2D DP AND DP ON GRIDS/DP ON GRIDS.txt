@@ -1,0 +1,176 @@
+#ninja training mem
+int help(int day,int last,vector<vector<int>> &points,vector<vector<int>>&dp){
+
+    if(day==0){
+       int maxi=0;
+       for (int i = 0; i <= 2; i++) {
+         if (i != last)
+           maxi = max(maxi, points[0][i]);
+       }
+       return maxi;
+    }
+        if(dp[day][last]!=-1) return dp[day][last];
+   int maxi=0;
+   for(int i=0;i<=2;i++){
+       if (i != last) {
+         int p = points[day][i] + help(day - 1, i, points, dp);
+         maxi = max(maxi, p);
+       }
+   }
+   return dp[day][last]=maxi;
+}
+int ninjaTraining(int n, vector<vector<int>> &points) {
+    vector<vector<int>>dp(n,vector<int>(4,-1));
+  return help(n - 1, 3, points,dp);
+}
+
+
+
+
+#unique paths mem
+#include <bits/stdc++.h> 
+int f(int i,int j,vector<vector<int>>&dp){
+  if(i==0 && j==0){
+	  return 1;
+  }
+  if(i<0|| j<0){
+    return 0;
+  }
+  if(dp[i][j]!=-1) return dp[i][j];
+  return dp[i][j]=f(i-1,j,dp)+f(i,j-1,dp);
+}
+int uniquePaths(int m, int n) {
+  vector<vector<int>>dp(m,vector<int>(n,-1));
+   return f(m-1,n-1,dp);
+}
+
+
+#unique path 2 mem
+#include <bits/stdc++.h> 
+int mod=1e9+7;
+
+int f(int i,int j,vector<vector<int>>&mat,vector<vector<int>>&dp){
+  if(i>0 && j>0 && mat[i][j]==-1) return 0;
+  if(i==0 && j==0){
+	  return 1;
+  }
+  if(i<0||j<0 ||mat[i][j]==-1){
+    return 0;
+  }
+  if(dp[i][j]!=-1 ) return dp[i][j];
+  int up=f(i-1,j,mat,dp);
+  int left=f(i,j-1,mat,dp);
+  return dp[i][j]=(up+left)%mod;
+}
+
+int mazeObstacles(int n, int m, vector<vector<int>> &mat) {
+  vector<vector<int>> dp(n, vector<int>(m, -1));
+  return f(n - 1, m - 1, mat,dp);
+}
+
+
+
+#minimum path sum mem
+#include <bits/stdc++.h> 
+int f(int i,int j,vector<vector<int>>&mat,vector<vector<int>>&dp){
+  if(i==0 && j==0){
+	  return mat[0][0];
+  }
+  if(i<0||j<0){
+    return 1e9;
+  }
+  if(dp[i][j]!=-1 ) return dp[i][j];
+  int up=mat[i][j]+f(i-1,j,mat,dp);
+  int left=mat[i][j]+f(i,j-1,mat,dp);
+  return dp[i][j]=min(up,left);
+}
+
+int minSumPath(vector<vector<int>> &grid) {
+    int m=grid.size();
+    int n=grid[0].size();
+    vector<vector<int>> dp(m, vector<int>(n, -1));
+    return f(m-1,n-1,grid,dp);
+}
+
+
+
+#triangle mem
+#include <bits/stdc++.h> 
+int f(int i,int j,int n,vector<vector<int>>&mat,vector<vector<int>>&dp){
+  if(i==n-1) return mat[i][j];
+  if(dp[i][j]!=-1 ) return dp[i][j];
+  int down=mat[i][j]+f(i+1,j,n,mat,dp);
+  int dia=mat[i][j]+f(i+1,j+1,n,mat,dp);
+  return dp[i][j]=min(down,dia);
+}
+
+int minimumPathSum(vector<vector<int>> &triangle, int n) {
+
+  vector<vector<int>> dp(n, vector<int>(n, -1));
+  return f(0, 0, n, triangle, dp);
+}
+
+
+#max path sum memo
+#include <bits/stdc++.h> 
+int f(int i,int j,int m,vector<vector<int>>&mat,vector<vector<int>>&dp){
+    if(j<0 || j>=m) return -1e9;
+    if(i==0) return mat[i][j];
+    if(dp[i][j]!=-1) return dp[i][j];
+    int d=mat[i][j]+f(i-1,j,m,mat,dp);
+    int dl=mat[i][j]+f(i-1,j-1,m,mat,dp);
+    int dr=mat[i][j]+f(i-1,j+1,m,mat,dp);
+    return dp[i][j]=max(d,max(dl,dr));
+}
+int getMaxPathSum(vector<vector<int>> &matrix) {
+    int m = matrix.size();
+    int n = matrix[0].size();
+    vector<vector<int>> dp(m, vector<int>(n, -1));
+    int maxi=-1e9;
+    for(int i=0;i<n;i++){
+        int ans=f(m-1,i,n,matrix,dp);
+        maxi=max(maxi,ans);
+    }
+    return maxi;
+}
+
+
+
+
+
+
+#chocolate pickup mem
+#include <bits/stdc++.h>
+
+int f(int i,int j1,int j2,int r,int c,vector<vector<int>> &grid,vector<vector<vector<int>>> &dp){
+    if(j1<0 || j1>=c || j2<0 || j2>=c) return -1e9;
+    if(i==r-1){
+        if(j1==j2){
+            return grid[i][j1];
+        }
+        else{
+            return grid[i][j1] +grid[i][j2];
+        }
+    }
+    if(dp[i][j1][j2]!=-1) return dp[i][j1][j2];
+    int maxi=-1e9;
+    for(int dl=-1;dl<=1;dl++){
+        for(int dr=-1;dr<=1;dr++){
+            int ans;
+            if(j1==j2){
+                 ans=grid[i][j1]+f(i+1,j1+dl,j2+dr,r,c,grid,dp);
+            } else {
+                 ans = grid[i][j1] + grid[i][j2] +
+                       f(i + 1, j1 + dl, j2 + dr, r, c, grid, dp);
+            }
+            maxi = max(ans, maxi);
+        }
+    }
+    return dp[i][j1][j2]=maxi;
+
+}
+int maximumChocolates(int r, int c, vector<vector<int>> &grid) {
+  vector<vector<vector<int>>> dp(r, vector<vector<int>>(c, vector<int>(c,-1)));
+  return f(0, 0, c - 1,r,c, grid, dp);
+}
+
