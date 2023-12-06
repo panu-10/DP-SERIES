@@ -41,7 +41,47 @@ bool canPartition(vector<int> &arr, int n)
     return f(n - 1, p, arr,dp);
 }
 
+###space optimized subset to k by repeating
+#include <iostream>
+#include <vector>
+using namespace std;
 
+const int MOD = 1000000007;
+
+int countWays(int H, int N, vector<int>& damage) {
+    vector<int> dp(H + 1, 0);
+    dp[0] = 1;
+
+    for (int i = 1; i <= H; i++) {
+        for (int j = 0; j < N; j++) {
+            if (i - damage[j] >= 0) {
+                dp[i] = (dp[i] + dp[i - damage[j]]) % MOD;
+            }
+        }
+    }
+
+    return dp[H];
+}
+
+int main() {
+    int T;
+    cin >> T;
+
+    while (T--) {
+        int H, N;
+        cin >> H >> N;
+
+        vector<int> damage(N);
+        for (int i = 0; i < N; i++) {
+            cin >> damage[i];
+        }
+
+        int result = countWays(H, N, damage);
+        cout << result << endl;
+    }
+
+    return 0;
+}
 
 
 
